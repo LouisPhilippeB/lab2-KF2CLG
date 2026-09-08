@@ -2,6 +2,7 @@
 
 from ev_app import EvApp
 from moteur import Moteur
+from enc_rot import EncRot
 from param import (
     APP_CTRL_ROBOT,
     MOTEUR_DROIT_IN1,
@@ -17,6 +18,8 @@ from param import (
     MSG_RECULER,
     VITESSE_MAX,
     VITESSE_MIN,
+    ENC_ROT_GAUCHE,
+    ENC_ROT_DROIT
 )
 from robot import Robot
 
@@ -79,12 +82,10 @@ def creer_robot():
         DigitalOutputDevice(MOTEUR_DROIT_IN1),
         DigitalOutputDevice(MOTEUR_DROIT_IN2),
     )
-    enc_droit = EncRot(
-        DigitalInputDevice(MOTEUR_DROIT_IN1),
-        DigitalInputDevice(MOTEUR_DROIT_IN2),
-    )
-    return Robot(moteur_gauche, moteur_droit)
+    enc_droit = DigitalInputDevice(ENC_ROT_DROIT)
+    enc_gauche = DigitalInputDevice(ENC_ROT_GAUCHE)
 
+    return Robot(moteur_gauche, moteur_droit, enc_droit, enc_gauche)
 
 def main():
     controleur = CtrlRobot(APP_CTRL_ROBOT, creer_robot())

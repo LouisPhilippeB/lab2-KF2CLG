@@ -2,6 +2,9 @@
 
 from param import PWM_MAX, PWM_MIN
 
+ETAT_AVANT = 1
+ETAT_ARRET = 2
+ETAT_ARRIERE = 3
 
 class Moteur:
     def __init__(self, pwm, pin_avant, pin_arriere):
@@ -35,3 +38,11 @@ class Moteur:
         self._pwm.close()
         self._pin_avant.close()
         self._pin_arriere.close()
+
+    def etat(self):
+        if (self._pin_avant.is_lit):
+            return ETAT_AVANT
+        elif (self._pin_arriiere.is_lit):
+            return ETAT_ARRIERE
+        else:
+            return ETAT_ARRET

@@ -1,5 +1,6 @@
 """Modele du robot mobile."""
 
+from traqueur_distance import TraqueurDistance
 from param import (
     FACTEUR_MOTEUR_DROIT_PIVOT_D,
     FACTEUR_MOTEUR_GAUCHE_PIVOT_G,
@@ -10,9 +11,11 @@ from param import (
 
 
 class Robot:
-    def __init__(self, moteur_gauche, moteur_droit):
+    def __init__(self, moteur_gauche, moteur_droit, enc_gauche, enc_droit):
         self._moteur_gauche = moteur_gauche
         self._moteur_droit = moteur_droit
+        self._traqueur_gauche = TraqueurDistance(moteur_gauche, enc_gauche)
+        self._traqueur_droit = TraqueurDistance(moteur_droit, enc_droit)
 
     @staticmethod
     def limiter_vitesse(vitesse):
