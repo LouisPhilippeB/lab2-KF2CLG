@@ -46,6 +46,7 @@ class EvApp:
             while not self._termine:
                 readable, _, _ = select.select([self.udp_sock], [], [], self.tmo)
                 if not readable:
+                    self.dispatch_event(None)
                     continue
 
                 message, _ = self.udp_sock.recvfrom(TAILLE_MSG_TOT)
