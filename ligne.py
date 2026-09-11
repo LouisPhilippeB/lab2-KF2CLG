@@ -1,7 +1,6 @@
 """Arret automatique du robot apres chaque trajet de un metre."""
 
 import math
-import sys
 
 from ev_app import EvApp
 from ev_app_client_api import fermer_client, gen_ev_externe
@@ -10,7 +9,6 @@ from param import (
     APP_LIGNE,
     DISTANCE_LIGNE_CM,
     DISTANCE_PAR_TRANSITION_CM,
-    IP_CTRL_ROBOT,
     MSG_INIT,
     MSG_POSITION,
 )
@@ -20,13 +18,11 @@ class Ligne(EvApp):
     def __init__(
         self,
         port_no=APP_LIGNE,
-        ip_robot=IP_CTRL_ROBOT,
         envoyer=gen_ev_externe,
         afficher=print,
         **app_options,
     ):
         super().__init__(port_no, **app_options)
-        self.ip_robot = ip_robot
         self._envoyer = envoyer
         self._afficher = afficher
         self.distance_parcourue = 0.0
@@ -38,9 +34,9 @@ class Ligne(EvApp):
     @staticmethod
     def lire_position(evenement):
         donnees = evenement.split()
-        if len(donnees) != 5:
+        if len(donnees) != 3:
             raise ValueError(
-                "MSG_POSITION doit contenir exactement cinq valeurs"
+                "MSG_POSITION doit contenir x, y et l'orientation"
             )
 
         try:
@@ -60,7 +56,7 @@ class Ligne(EvApp):
         self._attend_position_initiale = True
         try:
             self._envoyer(
-                self.ip_robot,
+                "127.0.0.1",
                 APP_CTRL_ROBOT,
                 MSG_INIT,
             )
@@ -103,7 +99,7 @@ class Ligne(EvApp):
             return
 
         try:
-            _vg, _vd, x, y, _angle = self.lire_position(evenement)
+            x, y, _angle = self.lire_position(evenement)
         except ValueError as erreur:
             print(f"MSG_POSITION invalide ignore: {erreur}")
             return
@@ -119,11 +115,9 @@ class Ligne(EvApp):
 
 
 def main():
-    ip_robot = sys.argv[1] if len(sys.argv) > 1 else IP_CTRL_ROBOT
-    ligne = Ligne(ip_robot=ip_robot)
+    ligne = Ligne()
     print(
-        f"Programme ligne en ecoute sur le port {APP_LIGNE}; "
-        f"robot a {ip_robot}:{APP_CTRL_ROBOT}."
+        f"Programme ligne en ecoute sur le port local {APP_LIGNE}."
     )
     try:
         ligne.run()
