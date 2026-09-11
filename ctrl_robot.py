@@ -180,9 +180,7 @@ class CtrlRobot(EvApp):
 
         distance_gauche, distance_droite = self._lire_deplacements_roues()
         distance = (distance_droite + distance_gauche) / 2.0
-        variation_angle = (
-            distance_droite - distance_gauche
-        ) / LARGEUR_ROBOT_CM
+        variation_angle = ( distance_droite - distance_gauche ) / LARGEUR_ROBOT_CM
         angle_milieu = self.angle + variation_angle / 2.0
         self.x += math.cos(angle_milieu) * distance
         self.y += math.sin(angle_milieu) * distance
