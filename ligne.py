@@ -1,4 +1,4 @@
-"""Arret automatique du robot apres chaque trajet de un metre."""
+"""Arret lorsque le robot est a un metre du debut de la ligne."""
 
 import math
 
@@ -26,7 +26,7 @@ class Ligne(EvApp):
         self._envoyer = envoyer
         self._afficher = afficher
         self.distance_parcourue = 0.0
-        self._point_precedent = None
+        self._point_initial = None
         self._attend_position_initiale = True
 
         self._demander_initialisation()
@@ -52,7 +52,7 @@ class Ligne(EvApp):
 
     def _demander_initialisation(self):
         self.distance_parcourue = 0.0
-        self._point_precedent = None
+        self._point_initial = None
         self._attend_position_initiale = True
         try:
             self._envoyer(
@@ -68,19 +68,17 @@ class Ligne(EvApp):
         if distance_origine > DISTANCE_PAR_TRANSITION_CM:
             return False
 
-        self._point_precedent = (x, y)
+        self._point_initial = (x, y)
         self._attend_position_initiale = False
         self._afficher("Nouvelle ligne: position initiale.")
         return True
 
-    def _ajouter_position(self, x, y):
-        point = (x, y)
-        x_precedent, y_precedent = self._point_precedent
-        self.distance_parcourue += math.hypot(
-            point[0] - x_precedent,
-            point[1] - y_precedent,
+    def _calculer_distance(self, x, y):
+        x_initial, y_initial = self._point_initial
+        self.distance_parcourue = math.hypot(
+            x - x_initial,
+            y - y_initial,
         )
-        self._point_precedent = point
 
         if self.distance_parcourue < DISTANCE_LIGNE_CM:
             return
@@ -107,7 +105,7 @@ class Ligne(EvApp):
         if self._attend_position_initiale:
             self._accepter_position_initiale(x, y)
             return
-        self._ajouter_position(x, y)
+        self._calculer_distance(x, y)
 
     def quitter(self):
         self._demander_initialisation()
