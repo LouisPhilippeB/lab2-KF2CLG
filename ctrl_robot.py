@@ -105,7 +105,7 @@ class CtrlRobot(EvApp):
             self._sens_droit = sens_droit
 
     def initialiser_odometrie(self):
-        """Arrete le robot et remet les compteurs et la pose a zero."""
+        """Arrete le robot et remet les compteurs a zero."""
         self.robot.arreter()
         with self._verrou_compteurs:
             self._compteur_gauche = 0
